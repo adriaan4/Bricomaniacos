@@ -17,7 +17,7 @@ const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '
 
 // ---- Calendario de la liga (la hora, el campo y el resultado se rellenan desde Admin) ----
 const CAL_SEED = [
-  [1, '2026-10-25', 'Piso Piloto FC', '20:00', '1-2'],
+  [1, '2026-10-25', 'Piso Piloto FC', '20:00', '2-1'],
   [2, '2026-11-08', 'Real Garra Balompie', '00:00', ''],
   [3, '2026-11-15', 'Pachanga FC', '00:00', ''],
   [4, '2026-11-22', 'THE OFFICE', '00:00', ''],
@@ -934,7 +934,7 @@ app.delete('/api/garrabet-admin/league-result/:id', admin, async (req, res) => {
   await save();
   res.json({ ok: true });
 });
-// ---- MLA Sport (grupo 4708): sincroniza clasificación y resultados cada hora los domingos de 15:00 a 22:00 (hora de Madrid) ----
+// ---- MLA Sport (grupo 4708): sincroniza clasificación y resultados cada hora los domingos de 16:00 a 22:00 (hora de Madrid) ----
 // Si MLA falla o la página no se reconoce, NO se toca nada: se conservan los últimos datos. Solo se guarda cuando algo cambia (así no hay duplicados ni escrituras de más).
 const MLA = require('./mla');
 const MLA_GROUP = process.env.MLA_GROUP || '4708';
@@ -1013,10 +1013,10 @@ async function mlaSync(why) {
     return { ok: false, error: mlaState.error };
   } finally { mlaState.running = false; }
 }
-function mlaWindow(now = new Date()) { // domingo 15:00–22:59 en Madrid -> clave de la hora; si no, null
+function mlaWindow(now = new Date()) { // domingo 16:00–22:59 en Madrid -> clave de la hora; si no, null
   const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: TZ, weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' }).formatToParts(now).map(x => [x.type, x.value]));
   const h = +p.hour;
-  return p.weekday === 'Sun' && h >= 15 && h <= 22 ? p.year + '-' + p.month + '-' + p.day + 'T' + p.hour : null;
+  return p.weekday === 'Sun' && h >= 16 && h <= 22 ? p.year + '-' + p.month + '-' + p.day + 'T' + p.hour : null;
 }
 let mlaSlot = '', mlaRetry = 0, mlaNextRetry = 0;
 setInterval(async () => { // una consulta por hora; si falla, 2 reintentos más (cada 10 min) dentro de esa misma hora
