@@ -716,8 +716,8 @@ function gbFeasible(sels) {
 }
 function gbSelLabel(x) { // mismo texto que ve el usuario en el boleto
   const m = db.calendar.find(c => c.j === x.j), rv = (m && m.rival) || 'Rival', fm = n => String(n).replace('.', ',');
-  if (x.market === 'res') return { 1: 'Gana Real Garra', X: 'Empate', 2: 'Gana ' + rv }[x.side];
-  if (x.market === 'dc') return { '1X': 'Doble oportunidad · Real Garra o empate', 12: 'Doble oportunidad · Real Garra o ' + rv, X2: 'Doble oportunidad · Empate o ' + rv }[x.side];
+  if (x.market === 'res') return { 1: 'Gana Bricomaniacos', X: 'Empate', 2: 'Gana ' + rv }[x.side];
+  if (x.market === 'dc') return { '1X': 'Doble oportunidad · Bricomaniacos o empate', 12: 'Doble oportunidad · Bricomaniacos o ' + rv, X2: 'Doble oportunidad · Empate o ' + rv }[x.side];
   if (x.market === 'btts') return 'Ambos equipos marcan · ' + (x.side === 'y' ? 'Sí' : 'No');
   if (x.market === 'exact') return 'Resultado exacto ' + String(x.line).replace('-', ' - ');
   if (x.market === 'scorer') return 'Marca ' + x.line;
@@ -940,7 +940,7 @@ const MLA = require('./mla');
 const MLA_GROUP = process.env.MLA_GROUP || '4708';
 const MLA_URLS = (process.env.MLA_URLS || 'https://www.mlasport.com/clasificacion-grupo/4708').split(',').map(s => s.trim()).filter(Boolean); // páginas de clasificación y/o resultados del grupo
 const mlaState = { running: false, lastTry: '', lastOk: '', error: MLA_URLS.length ? '' : 'Falta la variable MLA_URLS', lastChange: null };
-const mlaIsGarra = n => /\bREAL GARRA\b|^GARRA$/.test(norm(n));
+const mlaIsGarra = n => /\bBRICOMANIACOS\b/.test(norm(n)); // ojo: NO usar "REAL GARRA" aquí, porque hay un rival de verdad que se llama «Real Garra Balompie» y lo confundía con nosotros
 function mlaApply(data) { // aplica lo leído en MLA a la base de datos; devuelve la lista de cambios (vacía = nada cambió)
   lgEnsure();
   const changes = [], skipped = [];

@@ -961,7 +961,7 @@ function gbMarketRes(j){
  return `<div class="gbm"><h3>Resultado</h3><div class="gbbtns three">${gbBtn(j,'res','','1','Bricomaniacos FC',od.res['1'])}${gbBtn(j,'res','','X','Empate',od.res.X)}${gbBtn(j,'res','','2',esc(gbRival(j)),od.res['2'])}</div></div>`}
 function gbMarketDc(j){
  const d=(GBS().dc||{})[j]||{};if(!d['1X']&&!d['12']&&!d.X2)return '';
- return `<div class="gbm"><h3>Doble oportunidad</h3><div class="gbbtns three">${gbBtn(j,'dc','','1X','Garra o empate',d['1X'])}${gbBtn(j,'dc','','12','Garra o '+esc(gbRival(j)),d['12'])}${gbBtn(j,'dc','','X2','Empate o '+esc(gbRival(j)),d.X2)}</div></div>`}
+ return `<div class="gbm"><h3>Doble oportunidad</h3><div class="gbbtns three">${gbBtn(j,'dc','','1X','Bricomaniacos o empate',d['1X'])}${gbBtn(j,'dc','','12','Bricomaniacos o '+esc(gbRival(j)),d['12'])}${gbBtn(j,'dc','','X2','Empate o '+esc(gbRival(j)),d.X2)}</div></div>`}
 function gbMarketBtts(j){
  const od=gbOdds(j),b=(od&&od.btts)||{};if(!b.y&&!b.n)return '';
  return `<div class="gbm"><h3>Ambos equipos marcan</h3><div class="gbbtns">${gbBtn(j,'btts','','y','Sí',b.y)}${gbBtn(j,'btts','','n','No',b.n)}</div></div>`}
@@ -972,7 +972,7 @@ function gbMarketYellow(j){
  const yo=(GBS().yellowOdds||{})[j]||{},names=Object.keys(yo).filter(n=>n!=='NINGUNO').sort((a,b)=>yo[a]-yo[b]),none=yo.NINGUNO;if(!names.length&&!none)return '';
  return `<div class="gbm"><h3>🟨 Tarjeta amarilla · ve amarilla en el partido</h3><div class="gbbtns">${names.map(n=>gbBtn(j,'yellow',n,'s',esc(n),yo[n])).join('')}${none?gbBtn(j,'yellow','NINGUNO','s','Ninguno',none):''}</div></div>`}
 let gbOtherSc={};
-function gbOtherBtn(j){const o=gbOtherSc[j]||{a:6,b:0},k=o.a+'-'+o.b;return gbBtn(j,'exact',k,'s','Garra '+o.a+' – '+o.b+' '+esc(gbRival(j)),(gbEx(j)||{})[k])}
+function gbOtherBtn(j){const o=gbOtherSc[j]||{a:6,b:0},k=o.a+'-'+o.b;return gbBtn(j,'exact',k,'s','Bricomaniacos '+o.a+' – '+o.b+' '+esc(gbRival(j)),(gbEx(j)||{})[k])}
 function gbMarketExact(j){
  const ex=gbEx(j);if(!ex)return '';let h='<span></span>';
  for(let b=0;b<=5;b++)h+=`<span class="h">${b}</span>`;
