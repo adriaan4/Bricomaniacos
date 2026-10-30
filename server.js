@@ -822,7 +822,7 @@ function lgStats() {
   const ms = lgMatches(), T = new Map();
   const get = n => { const k = norm(n); if (!T.has(k)) T.set(k, { key: k, name: n, PJ: 0, G: 0, E: 0, P: 0, GF: 0, GC: 0, Pts: 0, seq: [] }); return T.get(k); };
   get(LG_GARRA); db.calendar.forEach(m => get(m.rival)); db.garrabet.league.results.forEach(r => { get(r.a); get(r.b); });
-  let goals = 0;
+  let goals = 0, nm = ms.length;
   for (const m of ms) {
     for (const [t, gf, gc] of [[get(m.a), m.ga, m.gb], [get(m.b), m.gb, m.ga]]) {
       const p = gf > gc ? 3 : gf === gc ? 1 : 0;
@@ -830,7 +830,12 @@ function lgStats() {
     }
     goals += m.ga + m.gb;
   }
-  const mu = (goals + 4 * LG_PRIOR_MU) / (2 * ms.length + 4); // media de goles por equipo y partido (con un pequeño peso a favor de la media habitual)
+  if (db.mla && Array.isArray(db.mla.standings) && db.mla.standings.length >= 2) { // la clasificación oficial de MLA manda: sus números sustituyen a los calculados (la forma sigue saliendo de los resultados)
+    goals = 0; let pj = 0;
+    for (const o of db.mla.standings) { const t = get(o.name); t.PJ = o.PJ; t.G = o.G; t.E = o.E; t.P = o.P; t.GF = o.GF; t.GC = o.GC; t.Pts = o.Pts; goals += o.GF; pj += o.PJ; }
+    nm = pj / 2;
+  }
+  const mu = (goals + 4 * LG_PRIOR_MU) / (2 * nm + 4); // media de goles por equipo y partido (con un pequeño peso a favor de la media habitual)
   for (const t of T.values()) {
     t.att = ((t.GF + LG_K * mu) / (t.PJ + LG_K)) / mu;              // ataque: 1 = media de la liga
     t.def = ((t.GC + LG_K * mu) / (t.PJ + LG_K)) / mu;              // defensa (goles encajados): menos de 1 = defiende mejor que la media
@@ -882,6 +887,10 @@ function lgAdminView() {
   const st = lgStats(), cfg = db.garrabet.cfg, nm = lgNextMatch();
   const teams = st.teams.map(t => ({ name: t.name, garra: t.key === norm(LG_GARRA), PJ: t.PJ, G: t.G, E: t.E, P: t.P, GF: t.GF, GC: t.GC, DG: t.GF - t.GC, Pts: t.Pts, form: t.form, rating: t.rating }))
     .sort((a, b) => b.Pts - a.Pts || b.DG - a.DG || b.GF - a.GF || a.name.localeCompare(b.name));
+  if (db.mla && Array.isArray(db.mla.standings) && db.mla.standings.length >= 2) { // mismo orden que la clasificación oficial de MLA
+    const pos = new Map(db.mla.standings.map((o, i) => [norm(o.name), i]));
+    teams.sort((a, b) => (pos.has(norm(a.name)) ? pos.get(norm(a.name)) : 99) - (pos.has(norm(b.name)) ? pos.get(norm(b.name)) : 99));
+  }
   let next = null;
   if (nm) {
     const od = db.garrabet.odds[nm.j], e = lgExpected(nm.rival, st);
@@ -1008,7 +1017,7 @@ async function mlaSync(why) {
   try {
     const data = await MLA.readGroup(MLA_URLS); // si falla, salta al catch sin haber tocado nada
     const { changes, skipped } = mlaApply(data);
-    const resultsChanged = changes.some(c => !c.startsWith('Clasificación oficial'));
+    const resultsChanged = changes.length > 0; // resultados o clasificación nuevos -> se recalculan las cuotas
     let odds = null;
     if (resultsChanged) odds = lgAutoNext(); // resultados nuevos -> estadísticas (se calculan solas desde los resultados) y cuotas del próximo partido (las puestas a mano no se pisan)
     if (changes.length) await save();
