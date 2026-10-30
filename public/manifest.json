@@ -8,8 +8,8 @@
   "display": "standalone",
   "orientation": "portrait",
   "lang": "es",
-  "background_color": "#0d0b09",
-  "theme_color": "#0d0b09",
+  "background_color": "#0f0d0e",
+  "theme_color": "#0f0d0e",
   "icons": [
     {
       "src": "/icon-192.png",
@@ -48,8 +48,8 @@
       ]
     },
     {
-      "name": "Garro de Oro",
-      "url": "/#ez",
+      "name": "Porra",
+      "url": "/#porra",
       "icons": [
         {
           "src": "/icon-192.png",

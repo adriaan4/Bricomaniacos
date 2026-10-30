@@ -1,17 +1,17 @@
- :root{--bg:#100b0e;--ink:#fff7fb;--gold:#f08ab8;--red:#d94d91;--card:#21151d;--line:#75405b}
+ :root{--bg:#0f0d0e;--ink:#fbf4f1;--gold:#e484a8;--red:#b83a68;--card:#1b1618;--line:#4b3a42}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(1200px 500px at 50% -100px,#54243f,var(--bg));background-attachment:fixed;color:var(--ink);font:400 17px/1.5 Barlow,system-ui,sans-serif}
+body{margin:0;background:radial-gradient(1200px 500px at 50% -100px,#3a1f2c,var(--bg));background-attachment:fixed;color:var(--ink);font:400 17px/1.5 Barlow,system-ui,sans-serif}
 h1,h2,.big{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:800;margin:0}
 h1,h2{color:var(--gold)}
 nav{display:flex;gap:6px;align-items:center;padding:10px 18px;border-bottom:3px solid var(--gold);position:sticky;top:0;background:var(--bg);flex-wrap:wrap;z-index:2}
 nav img{height:46px;margin-right:8px;object-fit:contain}
 nav a{color:var(--ink);text-decoration:none;font:600 20px "Barlow Condensed",sans-serif;padding:4px 14px;border-radius:99px}
-nav a.on{background:var(--gold);color:#160d12}
+nav a.on{background:var(--gold);color:#0f0d0e}
 main{max-width:1000px;margin:0 auto;padding:24px 18px 60px}
 .home{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start}
 @media(max-width:780px){.home{grid-template-columns:1fr}}
 .hero{text-align:center;padding:10px 0}
-.crest{width:min(200px,42vw);filter:drop-shadow(0 8px 24px rgba(240,138,184,.28))}
+.crest{width:min(200px,42vw);filter:drop-shadow(0 8px 24px rgba(228,132,168,.28))}
 .vs{display:flex;justify-content:center;align-items:center;gap:clamp(10px,4vw,28px);margin:6px 0 4px;flex-wrap:wrap}
 .crest.rival{border-radius:10px;object-fit:contain;max-height:200px;background:#fff2;padding:6px}
 .vsTxt{font:800 22px "Barlow Condensed",sans-serif;color:var(--red);border:2px solid var(--red);border-radius:99px;padding:2px 12px}
@@ -28,13 +28,13 @@ main{max-width:1000px;margin:0 auto;padding:24px 18px 60px}
 .p{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:10px;padding:14px;display:flex;gap:12px;align-items:center;position:relative}
 .n{font:800 34px "Barlow Condensed",sans-serif;color:var(--gold);min-width:44px}
 .p small{opacity:.7;display:block}
-.tro{position:absolute;top:8px;right:10px;background:var(--gold);color:#160d12;font:800 14px "Barlow Condensed",sans-serif;padding:0 8px;border-radius:99px}
+.tro{position:absolute;top:8px;right:10px;background:var(--gold);color:#0f0d0e;font:800 14px "Barlow Condensed",sans-serif;padding:0 8px;border-radius:99px}
 .pv{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:10px;padding:12px 14px;margin-top:10px}
 .vh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .banner{background:var(--red);border:3px solid var(--gold);border-radius:12px;padding:14px 18px;margin:14px 0}
 .banner b{font:800 34px "Barlow Condensed",sans-serif;display:block}
 button,input{font:inherit;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
-button{cursor:pointer;background:var(--gold);color:#160d12;font-weight:600;border-color:var(--gold)}
+button{cursor:pointer;background:var(--gold);color:#0f0d0e;font-weight:600;border-color:var(--gold)}
 button.mine{background:var(--red);color:var(--ink)}
 button.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
 button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
@@ -43,7 +43,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .msg{min-height:24px;font-weight:500;color:var(--gold)}
 ol.rank{padding-left:22px}
 dialog{background:var(--card);color:var(--ink);border:3px solid var(--gold);border-radius:14px;text-align:center;padding:24px 34px}
-dialog::backdrop{background:rgba(16,11,14,.82)}
+dialog::backdrop{background:rgba(15,13,14,.82)}
 dialog b{display:block;font:800 clamp(36px,9vw,64px) "Barlow Condensed",sans-serif;color:var(--gold)}
 [hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .5s}}

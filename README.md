@@ -14,7 +14,8 @@ Configura `ADMIN_PASSWORD` como variable de entorno obligatoria para habilitar e
 - El calendario de la temporada está cargado en `data/data.json`.
 - La jornada 1 se muestra como Bricomaniacos FC 1–2 Piso Piloto, porque el dato recibido era Piso Piloto 2–1 Bricomaniacos FC.
 - La jornada 11 no se ha inventado: no venía en el calendario facilitado.
-- El escudo y los colores originales del ZIP se conservan.
+- Colores de la web tomados del escudo: rosa #e484a8, negro #0f0d0e y crema #fbf4f1.
+- Menú: Inicio · Plantilla, Crónicas · Calendario, Clasificación · MVP, Porra, Pronósticos (sin Economía ni Colaboradores).
 
 ## Panel privado
 Entra por `/login.html`. El acceso se valida en el servidor mediante `ADMIN_PASSWORD`.
