@@ -225,7 +225,7 @@ async function gbNotifyWins() {
     const fm = n => String(n).replace('.', ',');
     for (const { t, o } of todo) {
       const body = '¡Has ganado ' + fm(o.payout) + ' pavos con tu ' + (t.sels.length > 1 ? 'combinada de ' + t.sels.length : 'apuesta') + ' (cuota ' + fm(t.odd) + ')! 💰';
-      await sendPush('subs', JSON.stringify({ title: '🎉 ¡Apuesta ganada!', body, url: '/#garrabet', tag: 'win-' + t.id }), s => s.device === t.device).catch(e => console.error('Aviso apuesta ganada: ' + e.message));
+      await sendPush('subs', JSON.stringify({ title: '🎉 ¡Apuesta ganada!', body, url: '/#bricobet', tag: 'win-' + t.id }), s => s.device === t.device).catch(e => console.error('Aviso apuesta ganada: ' + e.message));
     }
   } finally { winBusy = false; }
 }
@@ -248,7 +248,7 @@ setInterval(async () => {
     if (t <= 0 || t > 24 * 36e5) return;
     db.reminded = d;
     await save();
-    notify('⏰ ¡Que juega el Garra!', '🦁 Garra vs ' + (db.next.rival || 'rival por confirmar') + ' · ' + fmtDate(d) + '. ¡No faltes!', '/#inicio', 'recordatorio');
+    notify('⏰ ¡Que juega Bricomaniacos!', '🦁 Bricomaniacos vs ' + (db.next.rival || 'rival por confirmar') + ' · ' + fmtDate(d) + '. ¡No faltes!', '/#inicio', 'recordatorio');
   } catch (e) { console.error('Recordatorio: ' + e.message); }
 }, 5 * 60 * 1000);
 
@@ -286,7 +286,7 @@ app.post('/api/vote', async (req, res) => {
 });
 
 
-// ---- GARRA VS EZ: quién ha bebido más (puntos por unidad) ----
+// ---- BRICOMANIACOS VS EZ: quién ha bebido más (puntos por unidad) ----
 const EZ_PTS = { cigarros: 0.5, cubatas: 3, chupitos: 2, cervezas: 1, porros: 3 };
 const ezCounts = b => {
   const o = {};
@@ -319,7 +319,7 @@ app.post('/api/push/subscribe', async (req, res) => {
   if (!ok) return bad(res, 'Suscripción no válida');
   const clean = { endpoint: s.endpoint, keys: { p256dh: s.keys.p256dh, auth: s.keys.auth } };
   const dv = String((req.body && req.body.device) || '').slice(0, 80);
-  if (dv.length >= 8) clean.device = dv; // enlaza este aviso con el dispositivo de GarraBet (para avisar de apuestas ganadas)
+  if (dv.length >= 8) clean.device = dv; // enlaza este aviso con el dispositivo de BricoBet (para avisar de apuestas ganadas)
   const i = db.subs.findIndex(x => x.endpoint === clean.endpoint);
   if (i >= 0) { if (JSON.stringify(db.subs[i]) === JSON.stringify(clean)) return res.json({ ok: true }); db.subs[i] = clean; }
   else { if (db.subs.length >= 2000) return bad(res, 'Demasiados dispositivos suscritos'); db.subs.push(clean); }
@@ -422,7 +422,7 @@ app.put('/api/squad', admin, async (req, res) => {
     }
     out.push({ id: prev.id || db.nextId++, n, name, x: clamp(p.x, 50), y: clamp(p.y, 50), c: !!p.c, goals, conceded, quote, photo, photoV });
   }
-  { // Dos jugadores con el mismo nombre (aunque cambien mayúsculas/acentos/espacios) rompen los mercados de goleador y amarilla de GarraBet y la Porra
+  { // Dos jugadores con el mismo nombre (aunque cambien mayúsculas/acentos/espacios) rompen los mercados de goleador y amarilla de BricoBet y la Porra
     const seen = new Set();
     for (const p of out) { const nn = norm(p.name); if (seen.has(nn)) return bad(res, 'Hay dos jugadores con el mismo nombre en la plantilla: ' + p.name); seen.add(nn); }
   }
@@ -442,7 +442,7 @@ app.put('/api/match', admin, async (req, res) => {
   if (t > 0 && t <= 24 * 36e5) db.reminded = db.next.date; // si ya falta menos de un día, no mandar además el recordatorio
   await save();
   res.json({ ok: true });
-  if (changed && t > 0 && db.next.rival) notify('⚽ ¡Hay partido, Garra!', '🦁 Garra vs ' + db.next.rival + ' · ' + fmtDate(db.next.date), '/#inicio', 'partido');
+  if (changed && t > 0 && db.next.rival) notify('⚽ ¡Hay partido, Bricomaniacos!', '🦁 Bricomaniacos vs ' + db.next.rival + ' · ' + fmtDate(db.next.date), '/#inicio', 'partido');
 });
 app.put('/api/calendar/:j', admin, async (req, res) => {
   const m = db.calendar.find(x => x.j === +req.params.j);
@@ -452,8 +452,8 @@ app.put('/api/calendar/:j', admin, async (req, res) => {
   m.time = time;
   m.field = String(req.body.field || '').trim().slice(0, 80);
   const result = String(req.body.result || '').trim().slice(0, 20);
-  // El resultado tiene que tener forma «3-1» (Real Garra primero): de él dependen GarraBet y la Porra, así que si no cuadra no se guarda en silencio
-  if (result && !gbResult({ result })) return bad(res, 'Resultado no válido: ponlo como «3-1» (Real Garra primero)');
+  // El resultado tiene que tener forma «3-1» (Bricomaniacos primero): de él dependen BricoBet y la Porra, así que si no cuadra no se guarda en silencio
+  if (result && !gbResult({ result })) return bad(res, 'Resultado no válido: ponlo como «3-1» (Bricomaniacos primero)');
   m.result = result;
   lgAutoNext(); // al meter un resultado se actualizan las estadísticas y se recalculan las cuotas del próximo partido
   await save();
@@ -547,7 +547,7 @@ app.post('/api/ez/reset', admin, async (req, res) => {
   res.json({ ok: true });
 });
 
-// ---- GARRO DE ORO: el que más puntos suma en la clasificación (se proclama desde Admin y sale en el inicio) ----
+// ---- BRICO DE ORO: el que más puntos suma en la clasificación (se proclama desde Admin y sale en el inicio) ----
 const ezScore = e => { const c = ezCounts(e); return Object.keys(EZ_PTS).reduce((t, k) => t + c[k] * EZ_PTS[k], 0); };
 app.post('/api/garro/close', admin, async (req, res) => {
   const rk = db.ez.map(e => ({ e, p: ezScore(e) }));
@@ -558,7 +558,7 @@ app.post('/api/garro/close', admin, async (req, res) => {
   await save();
   res.json(db.garro);
   const names = db.garro.winners.map(w => w.name).join(' y ');
-  notify('🍺🏆 ¡Tenemos GARRO DE ORO!', names + (db.garro.winners.length > 1 ? ' se lo reparten' : ' se lleva el trofeo') + ' con ' + max + ' puntos. ¡Salud! 🥂', '/#inicio', 'garro');
+  notify('🍺🏆 ¡Tenemos BRICO DE ORO!', names + (db.garro.winners.length > 1 ? ' se lo reparten' : ' se lleva el trofeo') + ' con ' + max + ' puntos. ¡Salud! 🥂', '/#inicio', 'garro');
 });
 app.delete('/api/garro', admin, async (req, res) => {
   snapshot('antes-de-quitar-garro');
@@ -598,7 +598,7 @@ app.delete('/api/crests/:id', admin, async (req, res) => {
   res.json({ ok: true });
 });
 app.get('/api/export', admin, (_, res) => {
-  res.setHeader('Content-Disposition', 'attachment; filename=garra-datos.json');
+  res.setHeader('Content-Disposition', 'attachment; filename=bricomaniacos-datos.json');
   res.json({ ...db, subs: [], adminSubs: [] }); // las suscripciones de avisos no se exportan
 });
 app.post('/api/import', admin, async (req, res) => {
@@ -612,7 +612,7 @@ app.post('/api/import', admin, async (req, res) => {
   res.json({ ok: true });
 });
 
-// ---- GARRABET: mercados Over/Under + 1X2 + resultado exacto, boletos sencillos y combinados, con nombre por dispositivo ----
+// ---- BRICOBET: mercados Over/Under + 1X2 + resultado exacto, boletos sencillos y combinados, con nombre por dispositivo ----
 const gbRange = (from, n) => Array.from({ length: n }, (_, i) => (from + i + 0.5).toFixed(1));
 const GB_LINES = { scored: gbRange(0, 8), conceded: gbRange(0, 8), total: gbRange(1, 11) }; // 0.5–7.5 / 0.5–7.5 / 1.5–11.5
 const GB_MAX_SELS = 8, GB_MAX_TICKETS = 60, GB_EX_MAX = 9, GB_EX_GRID = 5, GB_EX_MARGIN = 1.12;
@@ -628,7 +628,7 @@ const gbScorerOdds = od => { const o = {}; gbScNames().forEach(n => { const v = 
 const GB_YC_DEF = { PAJARES: 2.2, JUAN: 2.4, 'JIMÉNEZ': 2.6, HUGO: 2.8, MARIO: 3.2, JORGE: 3.5, ROBER: 3.8, DODU: 4.2, ADRI: 4.8, PABLO: 5.5, DAVID: 6.5, CARLOS: 7, ANTONIO: 12 };
 const gbYcDef = n => { const k = Object.keys(GB_YC_DEF).find(x => norm(x) === norm(n)); return k ? GB_YC_DEF[k] : 6; };
 const gbYellowDefault = () => { const o = {}; gbScNames().forEach(n => { o[n] = gbYcDef(n); }); return o; };
-// «Ninguno»: nadie del Garra ve amarilla en el partido (se apuesta como una selección más del mercado de amarillas)
+// «Ninguno»: nadie de Bricomaniacos ve amarilla en el partido (se apuesta como una selección más del mercado de amarillas)
 const GB_YC_NONE = 'NINGUNO', GB_YC_NONE_DEF = 3.5;
 const gbYellowOdds = od => { const o = {}; gbScNames().forEach(n => { const v = od && od.yellow ? od.yellow[n] : gbYcDef(n); if (v) o[n] = v; }); const nv = od && od.yellow && GB_YC_NONE in od.yellow ? od.yellow[GB_YC_NONE] : GB_YC_NONE_DEF; if (nv) o[GB_YC_NONE] = nv; return o; };
 // Doble oportunidad: si el admin no pone cuota, sale sola a partir de 1/X/2
@@ -688,7 +688,7 @@ function gbSelOdd(j, market, line, side) { // cuota vigente de una selección (n
 }
 const gbSelStatus = x => {
   const m = db.calendar.find(c => c.j === x.j), r = gbResult(m);
-  if (x.market === 'scorer') { // en cuanto el admin guarda quién marcó, se liquida (no hace falta el resultado); sin goles del Garra pierde
+  if (x.market === 'scorer') { // en cuanto el admin guarda quién marcó, se liquida (no hace falta el resultado); sin goles de Bricomaniacos pierde
     if (r && r.gf === 0) return 'lose';
     if (!m || !Array.isArray(m.scorers)) return 'pending';
     return m.scorers.includes(x.line) ? 'win' : 'lose';
@@ -704,7 +704,7 @@ const gbSelStatus = x => {
 // ---- Coherencia entre selecciones: un boleto no puede tener apuestas que se contradigan o que sean imposibles a la vez ----
 // Se prueba si existe al menos un marcador (gf-gc) que cumpla TODAS las selecciones del mismo partido a la vez. Usa gbWin, la misma función
 // que liquida las apuestas, así que cualquier mercado de marcador que se añada en el futuro a gbWin queda validado solo.
-// Goleadores: cada jugador distinto que «marca» exige al menos un gol del Garra. Amarillas: no dependen del marcador.
+// Goleadores: cada jugador distinto que «marca» exige al menos un gol de Bricomaniacos. Amarillas: no dependen del marcador.
 const GB_FEAS_MAX = 16; // marcador máximo que se prueba (más que cualquier línea de goles)
 const GB_NO_SCORE = ['scorer', 'yellow'];
 function gbFeasible(sels) {
@@ -723,7 +723,7 @@ function gbSelLabel(x) { // mismo texto que ve el usuario en el boleto
   if (x.market === 'exact') return 'Resultado exacto ' + String(x.line).replace('-', ' - ');
   if (x.market === 'scorer') return 'Marca ' + x.line;
   if (x.market === 'yellow') return x.line === GB_YC_NONE ? 'Ninguna amarilla' : 'Amarilla a ' + x.line;
-  const nm = { scored: 'Goles anotados Garra', conceded: 'Goles encajados Garra', total: 'Goles totales' }[x.market] || x.market;
+  const nm = { scored: 'Goles anotados Bricomaniacos', conceded: 'Goles encajados Bricomaniacos', total: 'Goles totales' }[x.market] || x.market;
   return nm + ' · ' + (x.side === 'o' ? 'Más de ' : 'Menos de ') + fm(x.line);
 }
 function gbConflict(sels) { // null si todo es compatible; si no, el grupo más pequeño de selecciones que se contradicen
@@ -800,9 +800,9 @@ app.put('/api/garrabet/:j', admin, async (req, res) => { // el admin guarda toda
 });
 // ---- Cuotas automáticas tipo casa de apuestas ----
 // Estadísticas de cada equipo (PJ, G, E, P, GF, GC, puntos, forma) a partir de los resultados → rating → goles esperados → Poisson → cuotas con margen de la casa.
-// Los partidos del Garra salen solos del Calendario; los del resto de la liga se meten en Admin → GarraBet → «Cuotas automáticas».
+// Los partidos de Bricomaniacos salen solos del Calendario; los del resto de la liga se meten en Admin → BricoBet → «Cuotas automáticas».
 const LG_GARRA = 'BRICOMANIACOS FC';
-const LG_SEED = [[1, 'Pachanga FC', 5, 'Potrero FC', 1], [1, 'THE OFFICE', 4, 'Gazilion', 2], [1, 'Bricomaniacos FC', 2, 'Piso Piloto FC', 1], [1, 'Atlético Sheriff', 2, 'Los Chicos Del Patio', 2]]; // jornada 1 de la clasificación (sin los del Garra)
+const LG_SEED = [[1, 'Pachanga FC', 5, 'Potrero FC', 1], [1, 'THE OFFICE', 4, 'Gazilion', 2], [1, 'Bricomaniacos FC', 2, 'Piso Piloto FC', 1], [1, 'Atlético Sheriff', 2, 'Los Chicos Del Patio', 2]]; // jornada 1 de la clasificación (sin los de Bricomaniacos)
 const LG_PRIOR_MU = 2.1, LG_K = 6, LG_FORM_N = 5, LG_MAXG = 15, LG_MARGIN_DEF = 0.08;
 const r2 = x => Math.round(x * 100) / 100;
 function lgEnsure() { // crea los ajustes y la liga si todavía no existen (también tras importar una copia antigua)
@@ -812,7 +812,7 @@ function lgEnsure() { // crea los ajustes y la liga si todavía no existen (tamb
   if (typeof g.cfg.auto !== 'boolean') g.cfg.auto = true;
   if (!g.league || !Array.isArray(g.league.results)) g.league = { results: LG_SEED.map(([j, a, ga, b, gb]) => ({ id: db.nextId++, j, a, b, ga, gb })) };
 }
-function lgMatches() { // todos los partidos jugados: los de la liga (otros equipos) + los del Garra con resultado en el calendario
+function lgMatches() { // todos los partidos jugados: los de la liga (otros equipos) + los de Bricomaniacos con resultado en el calendario
   const out = db.garrabet.league.results.map(r => ({ j: r.j, id: r.id, a: r.a, b: r.b, ga: r.ga, gb: r.gb }));
   for (const m of db.calendar) { const r = gbResult(m); if (r) out.push({ j: m.j, id: 1e9 + m.j, a: LG_GARRA, b: m.rival, ga: r.gf, gb: r.gc }); }
   return out.sort((x, y) => x.j - y.j || x.id - y.id);
@@ -843,7 +843,7 @@ function lgStats() {
   }
   return { teams: [...T.values()], mu, matches: ms.length };
 }
-function lgExpected(rival, st) { // goles esperados de cada equipo en Real Garra - rival
+function lgExpected(rival, st) { // goles esperados de cada equipo en Bricomaniacos - rival
   const find = n => st.teams.find(t => t.key === norm(n)) || { att: 1, def: 1, tilt: 0 };
   const g = find(LG_GARRA), r = find(rival), d = Math.exp(0.10 * (g.tilt - r.tilt)), c = x => Math.min(6, Math.max(0.3, x));
   return { lg: c(st.mu * g.att * r.def * d), lr: c(st.mu * r.att * g.def / d) };
@@ -911,12 +911,12 @@ app.post('/api/garrabet-admin/recalc', admin, async (req, res) => { // 🔄 Reca
   await save();
   res.json({ ok: true, jornadas: done });
 });
-app.post('/api/garrabet-admin/league-result', admin, async (req, res) => { // resultado de un partido entre otros dos equipos (los del Garra van en Calendario)
+app.post('/api/garrabet-admin/league-result', admin, async (req, res) => { // resultado de un partido entre otros dos equipos (los de Bricomaniacos van en Calendario)
   lgEnsure();
   const b = req.body || {}, j = +b.j, ga = Number(b.ga), gb = Number(b.gb), names = lgOtherTeams();
   const A = names.find(n => norm(n) === norm(b.a)), B = names.find(n => norm(n) === norm(b.b));
   if (!Number.isInteger(j) || j < 1 || j > 40) return bad(res, 'Pon la jornada (1 a 40)');
-  if (!A || !B) return bad(res, 'Elige los dos equipos de la lista (los partidos del Garra se ponen en Calendario)');
+  if (!A || !B) return bad(res, 'Elige los dos equipos de la lista (los partidos de Bricomaniacos se ponen en Calendario)');
   if (A === B) return bad(res, 'Tienen que ser dos equipos distintos');
   if (![ga, gb].every(n => Number.isInteger(n) && n >= 0 && n <= 30)) return bad(res, 'Pon los goles de cada equipo (0 a 30)');
   const busy = [A, B].find(n => db.garrabet.league.results.some(r => r.j === j && (norm(r.a) === norm(n) || norm(r.b) === norm(n))) || db.calendar.some(m => m.j === j && norm(m.rival) === norm(n)));
@@ -959,14 +959,14 @@ function mlaApply(data) { // aplica lo leído en MLA a la base de datos; devuelv
   const canon = n => known.get(norm(n)) || (official.has(norm(n)) ? n : null); // un equipo desconocido solo entra si sale en la clasificación de MLA
   for (const m of data.matches) {
     const aG = mlaIsGarra(m.a), bG = mlaIsGarra(m.b);
-    if (aG || bG) { // partido del Garra -> Calendario (resultado «Garra-rival»)
+    if (aG || bG) { // partido de Bricomaniacos -> Calendario (resultado «Bricomaniacos-rival»)
       const rivalName = aG ? m.b : m.a, gf = aG ? m.ga : m.gb, gc = aG ? m.gb : m.ga;
       const rv = canon(rivalName);
       const cands = db.calendar.filter(c => norm(c.rival) === norm(rivalName) || (rv && norm(c.rival) === norm(rv)));
       const cal = (m.j && cands.find(c => c.j === m.j)) || (m.date && cands.find(c => c.date === m.date)) || null;
-      if (!cal) { skipped.push('Garra-' + rivalName + ': no cuadra con el calendario'); continue; }
+      if (!cal) { skipped.push('Bricomaniacos-' + rivalName + ': no cuadra con el calendario'); continue; }
       const res = gf + '-' + gc;
-      if (cal.result !== res) { changes.push('Jornada ' + cal.j + ': Real Garra ' + res + ' ' + cal.rival); cal.result = res; }
+      if (cal.result !== res) { changes.push('Jornada ' + cal.j + ': Bricomaniacos ' + res + ' ' + cal.rival); cal.result = res; }
       continue;
     }
     const A = canon(m.a), B = canon(m.b);
@@ -1147,7 +1147,7 @@ app.post('/api/garrabet/ticket', async (req, res) => {
   const cf = gbConflict(sels);
   if (cf) return bad(res, gbConflictMsg(cf));
   // Doble oportunidad + 1X2 del mismo partido: no multiplican (el 1X2 ya está dentro de la doble; se cuenta solo la cuota del 1X2).
-  // Si se contradicen (por ejemplo Gana Garra + Empate o rival), el boleto no se puede hacer.
+  // Si se contradicen (por ejemplo Gana Bricomaniacos + Empate o rival), el boleto no se puede hacer.
   for (const a of sels.filter(x => x.market === 'res')) {
     const b = sels.find(x => x.market === 'dc' && x.j === a.j);
     if (!b) continue;
@@ -1193,7 +1193,7 @@ app.put('/api/garrabet-admin/user/:id', admin, async (req, res) => {
   await save();
   res.json({ ok: true });
 });
-// Usuarios/Nombres: lista única para GarraBet y la Porra (comparten exactamente el mismo almacén, db.garrabet.users)
+// Usuarios/Nombres: lista única para BricoBet y la Porra (comparten exactamente el mismo almacén, db.garrabet.users)
 app.get('/api/admin/users', admin, (_, res) => {
   const P = PR();
   res.json({
@@ -1250,7 +1250,7 @@ app.post('/api/garrabet-admin/ticket/:id/settle', admin, async (req, res) => {
   await save();
   res.json({ ok: true });
 });
-// Admin: quién marcó en cada partido (para liquidar los goleadores). Lista vacía = no marcó nadie del Garra
+// Admin: quién marcó en cada partido (para liquidar los goleadores). Lista vacía = no marcó nadie de Bricomaniacos
 app.put('/api/garrabet-admin/scorers/:j', admin, async (req, res) => {
   const m = db.calendar.find(x => x.j === +req.params.j);
   if (!m) return bad(res, 'Jornada no encontrada');
@@ -1259,7 +1259,7 @@ app.put('/api/garrabet-admin/scorers/:j', admin, async (req, res) => {
   await save();
   res.json({ ok: true });
 });
-// Admin: quién vio amarilla en cada partido (para liquidar las apuestas de tarjetas). Lista vacía = no vio amarilla nadie del Garra
+// Admin: quién vio amarilla en cada partido (para liquidar las apuestas de tarjetas). Lista vacía = no vio amarilla nadie de Bricomaniacos
 app.put('/api/garrabet-admin/yellows/:j', admin, async (req, res) => {
   const m = db.calendar.find(x => x.j === +req.params.j);
   if (!m) return bad(res, 'Jornada no encontrada');
@@ -1291,13 +1291,13 @@ app.delete('/api/garrabet-admin/ticket/:id', admin, async (req, res) => {
   res.json({ ok: true });
 });
 
-// ---- PORRA GARRA: porra de partidos + porra final de temporada ----
-// Usa EXACTAMENTE los mismos nombres/usuarios que GarraBet (db.garrabet.users, un nombre por dispositivo). No hay registros ni contraseñas nuevas.
+// ---- PORRA BRICOMANIACOS: porra de partidos + porra final de temporada ----
+// Usa EXACTAMENTE los mismos nombres/usuarios que BricoBet (db.garrabet.users, un nombre por dispositivo). No hay registros ni contraseñas nuevas.
 // Todo se guarda en db.porra (mismo almacenamiento que el resto: Upstash o disco). El resultado real es el mismo del Calendario (m.result, «3-1»).
 const PR_EXACT = 5, PR_SIGN = 3, PR_MAX_GOALS = 30; // puntos por resultado exacto / por acertar ganador o empate
 const PR_TZ = 'Europe/Madrid';
 const PR_PLAYER_KEYS = ['scorer', 'assister', 'yellows', 'mvp'];
-const PR_LABELS = { scorer: 'Máximo goleador', position: 'Posición final de Garra en liga', conceded: 'Goles que encajará Antonio', assister: 'Máximo asistente', yellows: 'Jugador con más amarillas', mvp: 'MVP de la temporada' };
+const PR_LABELS = { scorer: 'Máximo goleador', position: 'Posición final de Bricomaniacos en liga', conceded: 'Goles que encajará Antonio', assister: 'Máximo asistente', yellows: 'Jugador con más amarillas', mvp: 'MVP de la temporada' };
 const PR_KEYS = ['scorer', 'position', 'conceded', 'assister', 'yellows', 'mvp'];
 const PR_FINAL_PTS_DEF = { scorer: 10, position: 10, conceded: 10, assister: 10, yellows: 10, mvp: 10 }; // editables desde Admin
 const PR_FINAL_TOL = { position: 1, conceded: 3 }; // en estos dos campos, quedarse cerca da la mitad de los puntos
@@ -1316,7 +1316,7 @@ function PR() { // siempre devuelve la estructura completa (también tras import
 }
 const prName = uid => (db.garrabet.users.find(u => u.id === uid) || {}).name || 'SIN NOMBRE';
 const prCal = () => db.calendar.slice().sort((a, b) => String(a.date).localeCompare(String(b.date)) || a.j - b.j);
-const prTeams = () => Math.max(2, new Set(db.calendar.map(m => norm(m.rival))).size + 1); // rivales distintos + Garra
+const prTeams = () => Math.max(2, new Set(db.calendar.map(m => norm(m.rival))).size + 1); // rivales distintos + Bricomaniacos
 const prGoals = v => { if (v === '' || v == null || (typeof v !== 'number' && typeof v !== 'string')) return null; const n = Number(v); return Number.isInteger(n) && n >= 0 && n <= PR_MAX_GOALS ? n : null; };
 const prAdj = v => { if (v === '' || v == null) return null; const n = Number(String(v).replace(',', '.')); return Number.isFinite(n) && Math.abs(n) <= 1000 ? Math.round(n * 100) / 100 : undefined; };
 
@@ -1387,7 +1387,7 @@ function prTotals() { // puntos de cada persona: partidos + final
     if (pt !== null) { u.match += pt; const c = prCalc(p, gbResult(m)); if (c === PR_EXACT) u.exact++; else if (c === PR_SIGN) u.sign++; }
   }
   for (const f of P.finals) { const t = prFinalOut(f).total; get(f.uid).final += t || 0; }
-  for (const gu of db.garrabet.users) get(gu.id); // todos los que tienen nombre (de GarraBet o de la porra) salen también en la clasificación de la porra, con 0 si aún no han jugado
+  for (const gu of db.garrabet.users) get(gu.id); // todos los que tienen nombre (de BricoBet o de la porra) salen también en la clasificación de la porra, con 0 si aún no han jugado
   return Object.values(by).map(u => ({ ...u, total: Math.round((u.match + u.final) * 100) / 100 })).sort((a, b) => b.total - a.total || b.exact - a.exact || a.name.localeCompare(b.name));
 }
 function prFinalFields(b) { // valida los 6 campos de la porra final. Vacío = sin predicción en ese campo
@@ -1487,7 +1487,7 @@ app.get('/api/porra-admin/all', admin, (_, res) => {
     ranking: prTotals().map(u => ({ ...u }))
   });
 });
-// Resultado real: se guarda en el Calendario (el mismo que usa GarraBet), así todo se calcula solo y a la vez
+// Resultado real: se guarda en el Calendario (el mismo que usa BricoBet), así todo se calcula solo y a la vez
 app.put('/api/porra-admin/result/:j', admin, async (req, res) => {
   const m = db.calendar.find(x => x.j === +req.params.j);
   if (!m) return bad(res, 'Jornada no encontrada');

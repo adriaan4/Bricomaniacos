@@ -425,7 +425,7 @@ select{font:inherit;padding:8px 14px;border-radius:8px;border:1px solid var(--li
 </style>
 </head><body>
 <div id="splash" aria-hidden="true"><img src="escudo.png" alt=""><b>BRICOMANIACOS FC</b><i></i></div>
-<nav class="main-nav"><img src="escudo.png" alt="Escudo Bricomaniacos FC"><a href="#inicio">Inicio</a><i class="sep"></i><a href="#plantilla">Plantilla</a><a href="#cronicas">Crónicas</a><i class="sep"></i><a href="#calendario">Calendario</a><a href="#clasificacion">Clasificación</a><i class="sep"></i><a href="#mvp">MVP</a><a href="#porra">Porra</a><a href="#garrabet">Pronósticos</a></nav>
+<nav class="main-nav"><img src="escudo.png" alt="Escudo Bricomaniacos FC"><a href="#inicio">Inicio</a><i class="sep"></i><a href="#plantilla">Plantilla</a><a href="#cronicas">Crónicas</a><i class="sep"></i><a href="#calendario">Calendario</a><a href="#clasificacion">Clasificación</a><i class="sep"></i><a href="#mvp">MVP</a><a href="#porra">Porra</a><a href="#bricobet">Pronósticos</a></nav>
 <main>
 <section id="inicio" hidden><div class="home">
  <div class="hero">
@@ -485,7 +485,7 @@ select{font:inherit;padding:8px 14px;border-radius:8px;border:1px solid var(--li
  <div class="prpane" data-pp="mis" hidden><div id="prMine"></div></div>
 </section>
 
-<section id="garrabet" hidden><h1>Bricomaniacos</h1>
+<section id="bricobet" hidden><h1>Bricomaniacos</h1>
  <p class="sub">Toca las cuotas para armar tu boleto: una selección es sencilla y varias, combinada (se multiplican). Solo una selección por mercado y partido.</p>
  <div id="gbName"></div>
  <div class="row"><select id="gbMatch" aria-label="Partido"></select></div>
@@ -788,10 +788,10 @@ act('#addP',async()=>{await adm('/api/players','POST',{name:$('#pn').value});$('
 $('#closeRound').onclick=async()=>{if(!confirm('¿Cerrar la votación y mostrar el MVP?'))return;
  try{const e=await adm('/api/round/close','POST');filled=false;await load();$('#dlgRival').textContent=e.rival;$('#dlgTxt').innerHTML=names(e);$('#dlg').showModal()}catch(err){$('#amsg').textContent=err.message}};
 $('#dlgOk').onclick=()=>$('#dlg').close();
-$('#exportBtn').onclick=async()=>{const r=await fetch('/api/export',{headers:{'x-admin':pw}});const a=document.createElement('a');a.href=URL.createObjectURL(await r.blob());a.download='garra-datos.json';a.click()};
+$('#exportBtn').onclick=async()=>{const r=await fetch('/api/export',{headers:{'x-admin':pw}});const a=document.createElement('a');a.href=URL.createObjectURL(await r.blob());a.download='bricomaniacos-datos.json';a.click()};
 $('#importFile').onchange=async e=>{const f=e.target.files[0];if(!f||!confirm('Esto reemplaza todos los datos actuales por los del archivo. ¿Seguro?'))return;
  try{await adm('/api/import','POST',JSON.parse(await f.text()));filled=false;$('#amsg').textContent='Datos restaurados';await load()}catch(err){$('#amsg').textContent=err.message}};
-function route(first){let h=(location.hash||'#inicio').slice(1);if(!document.querySelector('main>section[id="'+h.replace(/[^\w-]/g,'')+'"]'))h='inicio';document.querySelectorAll('main>section').forEach(s=>s.hidden=s.id!==h);document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.hash==='#'+h));
+function route(first){let h=(location.hash||'#inicio').slice(1);if(h==='garrabet')h='bricobet';if(!document.querySelector('main>section[id="'+h.replace(/[^\w-]/g,'')+'"]'))h='inicio';document.querySelectorAll('main>section').forEach(s=>s.hidden=s.id!==h);document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.hash==='#'+h));
  const nv=$('nav'),on=nv.querySelector('a.on');if(on)nv.scrollTo({left:on.offsetLeft-(nv.clientWidth-on.offsetWidth)/2,behavior:first===true?'auto':'smooth'});
  if(first!==true)scrollTo(0,0)}
 addEventListener('hashchange',()=>route());route(true);load();setInterval(load,30000);
@@ -822,7 +822,7 @@ $('#pushBtn').onclick=async()=>{const msg=$('#pushMsg');
    if(await Notification.requestPermission()!=='granted'){msg.textContent='No has dado permiso para los avisos.';return pushUI()}
    const s=sub||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64(pushKey)});
    await sendSub(s);
-   try{await reg.showNotification('¡Avisos activados! 🔔',{body:'Te avisaremos de partidos, MVP, Garro de Oro y de tus apuestas ganadas. ¡Vamos Garra! 🦁',icon:'/icon-192.png',badge:'/badge.png',vibrate:[120,60,120],tag:'bienvenida'})}catch{}}
+   try{await reg.showNotification('¡Avisos activados! 🔔',{body:'Te avisaremos de partidos, MVP, Brico de Oro y de tus apuestas ganadas. ¡Vamos Bricomaniacos! 🦁',icon:'/icon-192.png',badge:'/badge.png',vibrate:[120,60,120],tag:'bienvenida'})}catch{}}
   await pushUI()
  }catch(e){msg.textContent='No se pudieron activar los avisos: '+e.message}};
 (async()=>{
@@ -934,7 +934,7 @@ function gbSelTxt(s){
  if(s.market==='btts')return 'Ambos equipos marcan · '+(s.side==='y'?'Sí':'No');
  if(s.market==='res')return ({1:'Gana Bricomaniacos FC',X:'Empate',2:'Gana '+gbRival(s.j)})[s.side];
  if(s.market==='exact')return 'Resultado exacto '+s.line.replace('-',' - ');
- return ((GBM.find(x=>x[0]===s.market)||[])[1]||s.market).replace(' – Bricomaniacos FC','')+(s.market==='total'?'':' Garra')+' · '+(s.side==='o'?'Más de ':'Menos de ')+gbL(s.line)}
+ return ((GBM.find(x=>x[0]===s.market)||[])[1]||s.market).replace(' – Bricomaniacos FC','')+(s.market==='total'?'':' Bricomaniacos')+' · '+(s.side==='o'?'Más de ':'Menos de ')+gbL(s.line)}
 function gbOddNow(s){const od=gbOdds(s.j);if(!od)return null;
  if(s.market==='dc')return((GBS().dc||{})[s.j]||{})[s.side]||null;
  if(s.market==='scorer')return((GBS().scorerOdds||{})[s.j]||{})[s.line]||null;
@@ -1028,8 +1028,8 @@ function gbAdmFill(){
  const so=(GBS().scorerOdds||{})[j]||GBS().scorerDef||{},scNames=Object.keys(GBS().scorerDef||{}).sort((a,b)=>(GBS().scorerDef[a]||0)-(GBS().scorerDef[b]||0)),scDone=(GBS().scorers||{})[j]||[];
  const yo=(GBS().yellowOdds||{})[j]||GBS().yellowDef||{},ycNames=Object.keys(GBS().yellowDef||{}).sort((a,b)=>(GBS().yellowDef[a]||0)-(GBS().yellowDef[b]||0)),ycDone=(GBS().yellows||{})[j]||[];
  const ex=gbEx(j),top=ex?Object.entries(ex).sort((a,b)=>a[1]-b[1]).slice(0,10).map(([k,v])=>k.replace('-','–')+' → '+gbO(v)).join(' · '):'';
- ad.innerHTML=`<div class="gbadm"><h4>Resultado</h4><div class="gbgrid r3"><span class="h">Local (Bricomaniacos FC)</span><span class="h">Empate</span><span class="h">Visitante</span>${inp('res|1',od.res['1'])}${inp('res|X',od.res.X)}${inp('res|2',od.res['2'])}</div><h4 style="margin-top:10px">Doble oportunidad</h4><div class="gbgrid r3"><span class="h">Garra o empate (1X)</span><span class="h">Garra o rival (12)</span><span class="h">Empate o rival (X2)</span>${inp('dc|1X',(od.dc||{})['1X'])}${inp('dc|12',(od.dc||{})['12'])}${inp('dc|X2',(od.dc||{}).X2)}</div><p class="sub">Si la dejas vacía, sale sola a partir de las cuotas 1/X/2.</p><h4 style="margin-top:10px">Ambos equipos marcan</h4><div class="gbgrid" style="grid-template-columns:1fr 1fr"><span class="h">Sí (marcan los dos)</span><span class="h">No (alguno se queda a 0)</span>${inp('btts|y',(od.btts||{}).y)}${inp('btts|n',(od.btts||{}).n)}</div><p class="sub">El <b>resultado exacto</b> se genera solo con estas tres cuotas (no hay que rellenarlo).${top?'<br>Marcadores más probables: '+top:''}</p></div>`+
- `<div class="gbadm"><h4>Goleadores (marca en cualquier momento)</h4><div class="gbgrid" style="grid-template-columns:1fr 1fr">${scNames.map(n=>`<span>${esc(n)}</span>${inp('scorer|'+n,so[n])}`).join('')}</div><p class="sub">Cuotas de menor a mayor; vacío = no se ofrece ese jugador.</p><h4 style="margin-top:10px">¿Quién marcó en este partido?</h4><div class="row">${scNames.map(n=>`<label class="row" style="margin:0"><input type="checkbox" data-gbsc="${esc(n)}" ${scDone.includes(n)?'checked':''}> ${esc(n)}</label>`).join('')}</div><div class="row"><button type="button" id="gbScSave">Guardar goleadores</button>${Array.isArray((GBS().scorers||{})[j])?'<button type="button" class="ghost" id="gbScOpen">🔓 Reabrir</button><small>🔒 Cerrado</small>':'<small>🟢 Abierto</small>'}</div><p class="sub">Hasta que los guardes (aunque sea sin marcar a nadie) las apuestas a goleador quedan pendientes. Si el Garra marca 0, se pierden solas.</p></div>`+
+ ad.innerHTML=`<div class="gbadm"><h4>Resultado</h4><div class="gbgrid r3"><span class="h">Local (Bricomaniacos FC)</span><span class="h">Empate</span><span class="h">Visitante</span>${inp('res|1',od.res['1'])}${inp('res|X',od.res.X)}${inp('res|2',od.res['2'])}</div><h4 style="margin-top:10px">Doble oportunidad</h4><div class="gbgrid r3"><span class="h">Bricomaniacos o empate (1X)</span><span class="h">Bricomaniacos o rival (12)</span><span class="h">Empate o rival (X2)</span>${inp('dc|1X',(od.dc||{})['1X'])}${inp('dc|12',(od.dc||{})['12'])}${inp('dc|X2',(od.dc||{}).X2)}</div><p class="sub">Si la dejas vacía, sale sola a partir de las cuotas 1/X/2.</p><h4 style="margin-top:10px">Ambos equipos marcan</h4><div class="gbgrid" style="grid-template-columns:1fr 1fr"><span class="h">Sí (marcan los dos)</span><span class="h">No (alguno se queda a 0)</span>${inp('btts|y',(od.btts||{}).y)}${inp('btts|n',(od.btts||{}).n)}</div><p class="sub">El <b>resultado exacto</b> se genera solo con estas tres cuotas (no hay que rellenarlo).${top?'<br>Marcadores más probables: '+top:''}</p></div>`+
+ `<div class="gbadm"><h4>Goleadores (marca en cualquier momento)</h4><div class="gbgrid" style="grid-template-columns:1fr 1fr">${scNames.map(n=>`<span>${esc(n)}</span>${inp('scorer|'+n,so[n])}`).join('')}</div><p class="sub">Cuotas de menor a mayor; vacío = no se ofrece ese jugador.</p><h4 style="margin-top:10px">¿Quién marcó en este partido?</h4><div class="row">${scNames.map(n=>`<label class="row" style="margin:0"><input type="checkbox" data-gbsc="${esc(n)}" ${scDone.includes(n)?'checked':''}> ${esc(n)}</label>`).join('')}</div><div class="row"><button type="button" id="gbScSave">Guardar goleadores</button>${Array.isArray((GBS().scorers||{})[j])?'<button type="button" class="ghost" id="gbScOpen">🔓 Reabrir</button><small>🔒 Cerrado</small>':'<small>🟢 Abierto</small>'}</div><p class="sub">Hasta que los guardes (aunque sea sin marcar a nadie) las apuestas a goleador quedan pendientes. Si Bricomaniacos marca 0, se pierden solas.</p></div>`+
  `<div class="gbadm"><h4>🟨 Tarjetas amarillas (ve amarilla en el partido)</h4><div class="gbgrid" style="grid-template-columns:1fr 1fr">${ycNames.map(n=>`<span>${esc(n)}</span>${inp('yellow|'+n,yo[n])}`).join('')}<span><b>NINGUNO</b> (nadie ve amarilla)</span>${inp('yellow|NINGUNO',(GBS().yellowOdds||{})[j]?yo.NINGUNO:GBS().yellowNoneDef)}</div><p class="sub">Cuotas de menor a mayor; vacío = no se ofrece ese jugador. «Ninguno» gana si no marcas a nadie en «¿Quién vio amarilla?».</p><h4 style="margin-top:10px">¿Quién vio amarilla en este partido?</h4><div class="row">${ycNames.map(n=>`<label class="row" style="margin:0"><input type="checkbox" data-gbyc="${esc(n)}" ${ycDone.includes(n)?'checked':''}> ${esc(n)}</label>`).join('')}</div><div class="row"><button type="button" id="gbYcSave">Guardar amarillas</button>${Array.isArray((GBS().yellows||{})[j])?'<button type="button" class="ghost" id="gbYcOpen">🔓 Reabrir</button><small>🔒 Cerrado</small>':'<small>🟢 Abierto</small>'}</div><p class="sub">Hasta que las guardes (aunque sea sin marcar a nadie) las apuestas a amarilla quedan pendientes.</p></div>`+
  GBM.map(([k,t])=>`<div class="gbadm"><h4>${t}</h4><div class="gbgrid"><span class="h">Línea</span><span class="h">Más (+)</span><span class="h">Menos (−)</span>${((GBS().lines||{})[k]||[]).map(l=>{const c=(od[k]||{})[l]||{};return `<span>${gbL(l)}</span>${inp(k+'|'+l+'|o',c.o)}${inp(k+'|'+l+'|u',c.u)}`}).join('')}</div></div>`).join('')}
 // ---- Admin: apuestas de todos (sencillas y combinadas) ----
@@ -1105,7 +1105,7 @@ let lg=null;
 async function lgLoad(){if(!pw)return;try{lg=await adm('/api/garrabet-admin/league');lgRender()}catch(e){}}
 function lgRender(){const L=lg;if(!L)return;const fo=document.activeElement,busy=fo&&$('#lgDet').contains(fo)&&fo.matches('input,select');
  const n=L.next,src={auto:'🤖 automáticas',manual:'✍️ puestas a mano',none:'sin cuotas'};
- $('#lgNext').innerHTML=n?`<div class="pv"><b>Próximo partido: J${n.j} · Bricomaniacos FC vs ${esc(n.rival)}</b><br><small>Goles esperados: Garra <b>${n.lg}</b> – ${esc(n.rival)} <b>${n.lr}</b> · Cuotas ahora: ${src[n.source]}${n.at?' ('+new Date(n.at).toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'})+')':''}</small><br>${[['1','Gana Garra'],['X','Empate'],['2','Gana '+n.rival]].map(([k,t])=>`${esc(t)} <b>${n.now&&n.now[k]?gbO(n.now[k]):'—'}</b>${n.source==='manual'?' <small>(calculada: '+gbO(n.calc[k])+')</small>':''}`).join(' · ')}</div>`:'<p>No quedan partidos sin resultado en el calendario.</p>';
+ $('#lgNext').innerHTML=n?`<div class="pv"><b>Próximo partido: J${n.j} · Bricomaniacos FC vs ${esc(n.rival)}</b><br><small>Goles esperados: Bricomaniacos <b>${n.lg}</b> – ${esc(n.rival)} <b>${n.lr}</b> · Cuotas ahora: ${src[n.source]}${n.at?' ('+new Date(n.at).toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'})+')':''}</small><br>${[['1','Gana Bricomaniacos'],['X','Empate'],['2','Gana '+n.rival]].map(([k,t])=>`${esc(t)} <b>${n.now&&n.now[k]?gbO(n.now[k]):'—'}</b>${n.source==='manual'?' <small>(calculada: '+gbO(n.calc[k])+')</small>':''}`).join(' · ')}</div>`:'<p>No quedan partidos sin resultado en el calendario.</p>';
  $('#lgTable').innerHTML='<thead><tr><th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>Pts</th><th>Forma</th><th>Rating</th></tr></thead><tbody>'+L.teams.map(t=>`<tr${t.garra?' class="me"':''}><td>${esc(t.name)}</td><td>${t.PJ}</td><td>${t.G}</td><td>${t.E}</td><td>${t.P}</td><td>${t.GF}</td><td>${t.GC}</td><td>${t.DG}</td><td><b>${t.Pts}</b></td><td class="lgF">${esc(t.form)||'—'}</td><td><b>${t.rating}</b></td></tr>`).join('')+'</tbody>';
  $('#lgList').innerHTML=L.results.map(r=>`<div class="pv vh"><span><small>J${r.j}</small> ${esc(r.a)} <b>${r.ga} - ${r.gb}</b> ${esc(r.b)}</span><button type="button" class="ghost" data-lgdel="${r.id}">Quitar</button></div>`).join('')||'<p>Todavía no hay resultados de otros equipos.</p>';
  if(!busy){$('#lgAuto').checked=L.cfg.auto;$('#lgMargin').value=String(L.cfg.margin).replace('.',',');
@@ -1140,7 +1140,7 @@ $('#gbMarkets').addEventListener('input',e=>{const r=e.target.closest('.gbs');if
  const t=(GBM.find(x=>x[0]===k)||[])[1],tmp=document.createElement('div');tmp.innerHTML=gbMarket(+j,k,t);box.querySelector('.gbbtns').replaceWith(tmp.firstElementChild.querySelector('.gbbtns'));r.style.setProperty('--p',(r.value/r.max*100)+'%')});
 $('#gbMarkets').addEventListener('pointerdown',e=>{if(e.target.closest('.gbs'))gbDrag=true});
 addEventListener('pointerup',()=>{gbDrag=false});
-$('#garrabet').addEventListener('click',async e=>{
+$('#bricobet').addEventListener('click',async e=>{
  const b=e.target.closest('button');if(!b)return;
  try{
   if(b.dataset.gb){const[j,m,l,sd]=b.dataset.gb.split('|');gbToggle(+j,m,l,sd);renderGB();return}
@@ -1179,7 +1179,7 @@ async function gbTicketCanvas(t){
  // cabecera oscura
  rect(M,M,W-2*M,HEAD,INK);
  let lx=M+IN;if(img){const h=112,w=h*img.width/img.height;g.drawImage(img,lx,M+23,w,h);lx+=w+22}
- fit('GARRABET',s=>'italic 800 '+s+'px '+F,W-M-IN-lx,[48,96]);g.fillStyle=CREAM;g.fillText('GARRA',lx,M+110);const gw=g.measureText('GARRA').width;g.fillStyle=GOLD;g.fillText('BET',lx+gw,M+110);
+ fit('BRICOBET',s=>'italic 800 '+s+'px '+F,W-M-IN-lx,[48,96]);g.fillStyle=CREAM;g.fillText('BRICOMANIACOS',lx,M+110);const gw=g.measureText('BRICOMANIACOS').width;g.fillStyle=GOLD;g.fillText('BET',lx+gw,M+110);
  g.textAlign='left';
  // nombre + estado
  const y0=M+HEAD,who=(GBS().me||'').toUpperCase();
@@ -1203,16 +1203,16 @@ async function gbTicketCanvas(t){
  const cell=(i,l,v,col)=>{g.textAlign='center';g.font='800 30px '+F;g.fillStyle='#555';g.fillText(l,bx+bw*i+bw/2,y+46);fit(v,s=>'italic 800 '+s+'px '+F,bw-30,[34,72]);g.fillStyle=col;g.fillText(v,bx+bw*i+bw/2,y+112)};
  cell(0,'APOSTADO',gbPv(t.stake)+' PAVOS',INK);cell(1,'CUOTA','X'+Number(t.odd).toFixed(2),RED);cell(2,st==='win'?'PREMIO COBRADO':st==='void'?'DEVUELTO':'PREMIO POSIBLE',gbPv(st==='void'?t.stake:pay)+' PAVOS',INK);
  g.textAlign='left';return c}
-let gbBlob=null,gbBlobName='boleto-garrabet.png';
+let gbBlob=null,gbBlobName='boleto-bricobet.png';
 async function gbShowImg(t){
  const c=await gbTicketCanvas(t);gbBlob=await new Promise(r=>c.toBlob(r,'image/png'));if(!gbBlob)return;
- gbBlobName='garrabet-'+(GBS().me||'boleto').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+t.id+'.png';
+ gbBlobName='bricobet-'+(GBS().me||'boleto').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+t.id+'.png';
  const im=$('#gbShareImg');if(im.dataset.u)URL.revokeObjectURL(im.dataset.u);im.dataset.u=URL.createObjectURL(gbBlob);im.src=im.dataset.u;
  const d=$('#gbShareDlg');if(!d.open)d.showModal()}
 $('#gbShareClose').onclick=()=>$('#gbShareDlg').close();
 $('#gbDlBtn').onclick=()=>{if(!gbBlob)return;const a=document.createElement('a');a.href=URL.createObjectURL(gbBlob);a.download=gbBlobName;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
 $('#gbShareBtn').onclick=async()=>{if(!gbBlob)return;const f=new File([gbBlob],gbBlobName,{type:'image/png'});
- try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Mi apuesta en Bricomaniacos',text:'https://fhul0bjwm2n3-production-bydzcjlv.europe-west1.suga.run/#garrabet'});return}}catch(e){if(e&&e.name==='AbortError')return}
+ try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Mi apuesta en Bricomaniacos',text:'https://fhul0bjwm2n3-production-bydzcjlv.europe-west1.suga.run/#bricobet'});return}}catch(e){if(e&&e.name==='AbortError')return}
  $('#gbDlBtn').click()};
 // ---- Plantilla oficial: jugadores colocados sobre el césped (vertical) + editor en Admin ----
 let squadDirty=false;
