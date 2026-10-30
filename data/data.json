@@ -1,0 +1,197 @@
+{
+  "nextId": 1,
+  "squad": [],
+  "players": [],
+  "next": {
+    "date": "2026-11-08T00:00:00",
+    "rival": "Real Garra Balompie",
+    "crest": "",
+    "field": ""
+  },
+  "round": {
+    "rival": "",
+    "votes": []
+  },
+  "history": [],
+  "subs": [],
+  "adminSubs": [],
+  "reminded": "",
+  "ez": [],
+  "garro": null,
+  "garrabet": {
+    "odds": {},
+    "users": [],
+    "tickets": [],
+    "league": {
+      "results": []
+    },
+    "cfg": {}
+  },
+  "calendar": [
+    {
+      "j": 1,
+      "date": "2026-10-25",
+      "rival": "Piso Piloto FC",
+      "time": "20:00",
+      "field": "",
+      "result": "1-2"
+    },
+    {
+      "j": 2,
+      "date": "2026-11-08",
+      "rival": "Real Garra Balompie",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 3,
+      "date": "2026-11-15",
+      "rival": "Pachanga FC",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 4,
+      "date": "2026-11-22",
+      "rival": "THE OFFICE",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 5,
+      "date": "2026-11-29",
+      "rival": "Atlético Sheriff",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 6,
+      "date": "2026-12-13",
+      "rival": "Los Chicos Del Patio",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 7,
+      "date": "2026-12-20",
+      "rival": "Gazilion",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 8,
+      "date": "2027-01-10",
+      "rival": "Potrero FC",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 9,
+      "date": "2027-01-17",
+      "rival": "Huerta FC",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 10,
+      "date": "2027-01-24",
+      "rival": "ValdeCity",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 12,
+      "date": "2027-02-14",
+      "rival": "Piso Piloto FC",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 13,
+      "date": "2027-02-21",
+      "rival": "Real Garra Balompie",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 14,
+      "date": "2027-02-28",
+      "rival": "Pachanga FC",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 15,
+      "date": "2027-03-14",
+      "rival": "THE OFFICE",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 16,
+      "date": "2027-03-21",
+      "rival": "Atlético Sheriff",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 17,
+      "date": "2027-04-11",
+      "rival": "Los Chicos Del Patio",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 18,
+      "date": "2027-04-18",
+      "rival": "Gazilion",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 19,
+      "date": "2027-05-09",
+      "rival": "Potrero FC",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 20,
+      "date": "2027-05-16",
+      "rival": "Huerta FC",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    },
+    {
+      "j": 21,
+      "date": "2027-05-23",
+      "rival": "ValdeCity",
+      "time": "00:00",
+      "field": "",
+      "result": ""
+    }
+  ],
+  "calV1": true,
+  "calV2": true,
+  "teamV2": true,
+  "squadV2": true,
+  "crests": []
+}
