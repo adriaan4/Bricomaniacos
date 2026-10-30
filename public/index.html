@@ -603,6 +603,11 @@ select{font:inherit;padding:8px 14px;border-radius:8px;border:1px solid var(--li
   <details class="ad"><summary>🔔 Enviar aviso a todos</summary><div class="adb">
    <div class="row"><input id="pushTitle" placeholder="Título (opcional)"><input id="pushBody" placeholder="Texto del aviso"><button id="sendPush">Enviar aviso</button></div>
   </div></details>
+  <details class="ad" open><summary>📊 Clasificación MLA (grupo 4708)</summary><div class="adb">
+   <p class="sub">Se actualiza sola los domingos cada hora, de 16:00 a 22:00. Aquí puedes forzarla ahora o recargar la clasificación inicial.</p>
+   <div class="row"><button type="button" id="mlaSyncBtn">🔄 Sincronizar con MLA ahora</button><button type="button" class="ghost" id="mlaSeedBtn">📥 Cargar clasificación inicial</button></div>
+   <p id="mlaMsg" class="sub"></p>
+  </div></details>
   <details class="ad"><summary>💾 Copia de seguridad</summary><div class="adb">
    <div class="row"><button id="exportBtn">Descargar datos (JSON)</button><label class="row">Restaurar: <input id="importFile" type="file" accept=".json"></label></div>
   </div></details>
@@ -1453,5 +1458,10 @@ $('#login').addEventListener('click',()=>setTimeout(()=>{if(sessionStorage.adTab
 if(pw&&sessionStorage.adTab==='porra')prAdmLoad();
 setInterval(()=>{if(adOn()&&!isIn($('#prAMatch'))&&!isIn($('#prAFinal'))&&!isIn($('#prAHist')))prAdmLoad()},15000);
 })();
+</script>
+<script>
+(()=>{const m=document.getElementById('mlaMsg');if(!m)return;const call=async(u,t)=>{m.textContent='Un momento…';try{const r=await fetch(u,{method:'POST',headers:{'x-admin':sessionStorage.getItem('pw')||''}});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'Error');m.textContent=t(d);setTimeout(()=>location.reload(),1500)}catch(e){m.textContent='❌ '+e.message}};
+document.getElementById('mlaSyncBtn').onclick=()=>call('/api/mla/sync',d=>d.ok?(d.changes&&d.changes.length?'✅ '+d.changes.join(' · '):'✅ Sin cambios'):'❌ '+(d.error||'falló'));
+document.getElementById('mlaSeedBtn').onclick=()=>call('/api/mla/seed',()=>'✅ Clasificación cargada')})();
 </script>
 </body></html>

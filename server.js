@@ -121,6 +121,7 @@ async function init() {
   }
   db = loaded;
   db.round.votes.forEach(v => { if (!v.id) v.id = db.nextId++; });
+  if (typeof mlaSeed === 'function' && !db.mla) { mlaSeed(false); setTimeout(() => save().catch(() => {}), 0); }
   if (!Array.isArray(db.adminSubs)) db.adminSubs = []; // dispositivos del admin (avisos privados de apuestas y porras)
 
   // Migración de una sola vez: la lista de jugadores pasa a ser la de la votación MVP.
@@ -941,6 +942,14 @@ const MLA_GROUP = process.env.MLA_GROUP || '4708';
 const MLA_URLS = (process.env.MLA_URLS || 'https://www.mlasport.com/clasificacion-grupo/4708').split(',').map(s => s.trim()).filter(Boolean); // páginas de clasificación y/o resultados del grupo
 const mlaState = { running: false, lastTry: '', lastOk: '', error: MLA_URLS.length ? '' : 'Falta la variable MLA_URLS', lastChange: null };
 const mlaIsGarra = n => /\bBRICOMANIACOS\b/.test(norm(n)); // ojo: NO usar "REAL GARRA" aquí, porque hay un rival de verdad que se llama «Real Garra Balompie» y lo confundía con nosotros
+const MLA_SEED = [['Pachanga FC',3,1,1,0,0,5,1,4],['THE OFFICE',3,1,1,0,0,4,2,2],['Bricomaniacos FC',3,1,1,0,0,2,1,1],['Atlético Sheriff',1,1,0,1,0,2,2,0],['Los Chicos Del Patio',1,1,0,1,0,2,2,0],['Huerta FC',1,1,0,1,0,1,1,0],['Real Garra Balompie',1,1,0,1,0,1,1,0],['ValdeCity',0,0,0,0,0,0,0,0],['Piso Piloto FC',0,1,0,0,1,1,2,-1],['Gazilion',0,1,0,0,1,2,4,-2],['Potrero FC',0,1,0,0,1,1,5,-4]]; // clasificación de MLA tras la jornada 1 (captura del 30-10-2026)
+function mlaSeed(force) { // carga esa clasificación si aún no hay una de MLA (o siempre con force); la primera sincronización real la sustituye
+  if (db.mla && !force) return false;
+  db.mla = { group: MLA_GROUP, at: new Date().toISOString(), standings: MLA_SEED.map(([name, Pts, PJ, G, E, P, GF, GC, DG]) => ({ name, Pts, PJ, G, E, P, GF, GC, DG })) };
+  const c = (db.calendar || []).find(m => m.j === 1 && norm(m.rival) === norm('Piso Piloto FC'));
+  if (c && c.result === '1-2') c.result = '2-1'; // MLA: Bricomaniacos 3 pts, GF 2 / GC 1
+  return true;
+}
 function mlaApply(data) { // aplica lo leído en MLA a la base de datos; devuelve la lista de cambios (vacía = nada cambió)
   lgEnsure();
   const changes = [], skipped = [];
@@ -1025,6 +1034,7 @@ setInterval(async () => { // una consulta por hora; si falla, 2 reintentos más 
   if (slot !== mlaSlot) { mlaSlot = slot; mlaRetry = 0; mlaNextRetry = 0; const r = await mlaSync('domingo ' + slot); if (!r.ok) { mlaRetry = 1; mlaNextRetry = Date.now() + 10 * 60000; } else mlaRetry = 99; }
   else if (mlaRetry < 3 && Date.now() >= mlaNextRetry) { const r = await mlaSync('reintento ' + slot); if (r.ok) mlaRetry = 99; else { mlaRetry++; mlaNextRetry = Date.now() + 10 * 60000; } }
 }, 60 * 1000);
+app.post('/api/mla/seed', admin, async (_, res) => { mlaSeed(true); await save(); res.json({ ok: true }); }); // recarga la clasificación de la captura
 app.get('/api/mla/status', admin, (_, res) => res.json({ group: MLA_GROUP, urls: MLA_URLS.length, ...mlaState, standings: (db.mla && db.mla.standings) || [] }));
 app.post('/api/mla/sync', admin, async (_, res) => res.json(await mlaSync('manual'))); // para probarlo a mano desde Admin/consola, a cualquier hora
 // Importar cuotas de varias jornadas de golpe desde un JSON (goles anotados / encajados / totales; también 1X2, doble oportunidad y ambos marcan).
